@@ -1,0 +1,53 @@
+:root {
+
+    /* variations of your primary color */
+
+    --primary: #673ab7 !important;
+
+    --primary-light:  #9575cd !important;
+
+    --primary-dark:  #512da8 !important;
+
+    --primary-text:  #ffffff !important;
+
+    --primary-text-color:  #000000 !important;
+
+    /* variations of your secondary color */
+
+    --secondary:  #607d8b !important;
+
+    --secondary-light:  #90a4ae !important;
+
+    --secondary-dark:  #455a64 !important;
+
+    --secondary-text:  #ffffff !important;
+
+    --secondary-text-color:  #000000 !important;
+
+}
+
+h2{
+    color: var(--primary-text);
+    padding-left: 5%;
+    font-family: 'Times New Roman', Times, serif
+}
+
+nav{
+    border-left: 10px solid var(--primary-light)
+}
+
+.nav-wrapper {
+    background-color: var(--secondary-dark)
+}
+
+.check:checked + span{
+    text-decoration: line-through;
+}
+
+#submit-btn{
+    background-color: var(--primary)
+}
+
+#sort-btn{
+    background-color: var(--secondary)
+}
