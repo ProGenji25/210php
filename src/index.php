@@ -1,8 +1,14 @@
 <?php
-
+error_reporting(0);
 include 'config/settings.php';
 
 session_start();
+ 
+// Check if the user is already logged in, if yes then redirect him to welcome page
+if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
+    header("location: login.php");
+    exit;
+}
 // $_SESSION['test'] = 'Hello World';
 
 // // Create connection
@@ -27,7 +33,7 @@ session_start();
 <html>
 
 <head>
-	<title>Lab1</title>
+	<title>Lab3</title>
 	<meta charset="utf-8" />
 	<!--Links to stylesheets-->
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -45,9 +51,9 @@ session_start();
 		<div class="nav-wrapper">
 			<a href="#" class="brand-logo">IT&amp;C 210</a>
 			<ul id="nav-mobile" class="right hide-on-med-and-down">
-				<li><a href="#">HTML</a></li>
-				<li><a href="#">CSS</a></li>
-				<li><a href="#">JavaScript</a></li>
+				<li><?php echo htmlspecialchars($_SESSION["username"]); ?></li>
+				
+				<li><a href="/actions/logout-action.php">Logout</a></li>
 			</ul>
 		</div>
 	</nav>

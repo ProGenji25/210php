@@ -1,79 +1,97 @@
 <?php
+error_reporting(-1);
 // Include config file
 require_once "../config/settings.php";
  
-// Define variables and initialize with empty values
-$username = $password = $confirm_password = "";
-$username_err = $password_err = $confirm_password_err = "";
+session_start();
+
+// Create connection
+$conn = new mysqli($servername, $mysql_user, $mysql_password, $mysql_database);
+
+// Check connection
+if ($conn->connect_error) {
+	die('Connection failed: ' . $conn->connect_error);
+}
+else {
+    // Define variables and initialize with empty values
+    $username = $password = $confirm_password = "";
+    $username_err = $password_err = $confirm_password_err = "";
  
-// Processing form data when form is submitted
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+    // Processing form data when form is submitted
+    if($_SERVER["REQUEST_METHOD"] == "POST") {
  
-    // Validate username
-    if(empty(trim($_POST["username"]))){
-        $username_err = "Please enter a username.";
-    } else{
-        // Prepare a select statement
-        $sql = "SELECT id FROM users WHERE username = ?";
-        
-        if($stmt = $mysqli->prepare($sql)){
-            // Bind variables to the prepared statement as parameters
-            $stmt->bind_param("s", $param_username);
+        // Validate username
+        if(empty(trim($_POST["username"]))) {
             
-            // Set parameters
-            $param_username = trim($_POST["username"]);
+            header("location: ../register.php");
+            $_SESSION["error"] = "Please enter a username.";
+            exit();
+        } 
+        else {
+            // Prepare a select statement
+            $sql = "SELECT id FROM users WHERE username = ?";
+            if($stmt = $conn->prepare($sql)) {
+                // Bind variables to the prepared statement as parameters
+                $stmt->bind_param("s", $param_username);
             
-            // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                // store result
-                $stmt->store_result();
+                // Set parameters
+                $param_username = trim($_POST["username"]);
+            
+                // Attempt to execute the prepared statement
+                if($stmt->execute()) {
+                    // store result
+                    $stmt->store_result();
                 
-                if($stmt->num_rows == 1){
-                    $username_err = "This username is already taken.";
-                    header("location: register.php");
-                } else{
-                    $username = trim($_POST["username"]);
+                    if($stmt->num_rows == 1) {
+                        header("location: ../register.php");
+                        $_SESSION["error"] =  "This username is already taken.";
+                        exit();
+                    } 
+                    else {
+                        $username = trim($_POST["username"]);
+                    }
+                } 
+                else {
+                    //echo "Oops! Something went wrong. Please try again later.";
+                    header("location: ../register.php");
+                    exit();
                 }
-            } else{
-                echo "Oops! Something went wrong. Please try again later.";
-                header("location: register.php");
+            }
+         
+            // Close statement
+            $stmt->close();
+        }
+    
+        // Validate password
+        if(empty(trim($_POST["password"]))) {
+            
+            header("location: ../register.php");
+            $_SESSION["error"] =  "Please enter a password.";
+            exit();  
+        } 
+        else {
+            $password = trim($_POST["password"]);
+        }
+    
+        // Validate confirm password
+        if(empty(trim($_POST["confirm_password"]))) {
+            header("location: ../register.php");
+            $_SESSION["error"] =  "Please confirm password.";
+            exit();
+        } 
+        else {
+            $confirm_password = trim($_POST["confirm_password"]);
+            if($password !== $confirm_password) {
+                header("location: ../register.php");
+                $_SESSION["error"] =  "Password did not match.";
+                exit();
             }
         }
-         
-        // Close statement
-        $stmt->close();
-    }
-    
-    // Validate password
-    if(empty(trim($_POST["password"]))){
-        $password_err = "Please enter a password.";
-        header("location: register.php");     
-    } elseif(strlen(trim($_POST["password"])) < 6){
-        $password_err = "Password must have atleast 6 characters.";
-        header("location: register.php");
-    } else{
-        $password = trim($_POST["password"]);
-    }
-    
-    // Validate confirm password
-    if(empty(trim($_POST["confirm_password"]))){
-        $confirm_password_err = "Please confirm password.";
-        header("location: register.php");     
-    } else{
-        $confirm_password = trim($_POST["confirm_password"]);
-        if(empty($password_err) && ($password != $confirm_password)){
-            $confirm_password_err = "Password did not match.";
-            header("location: register.php");
-        }
-    }
-    
-    // Check input errors before inserting in database
-    if(empty($username_err) && empty($password_err) && empty($confirm_password_err)){
         
         // Prepare an insert statement
         $sql = "INSERT INTO users (username, password, logged_in) VALUES (?, ?, ?)";
          
-        if($stmt = $mysqli->prepare($sql)){
+        if($stmt = $conn->prepare($sql)) {
             // Bind variables to the prepared statement as parameters
             $stmt->bind_param("sss", $param_username, $param_password, $param_login);
             
@@ -83,20 +101,48 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $param_login = true;
             
             // Attempt to execute the prepared statement
-            if($stmt->execute()){
-                // Redirect to login page
-                header("location: login.php");
-            } else{
-                echo "Something went wrong. Please try again later.";
-                header("location: register.php");
+            if($stmt->execute()) {
+                $stmt->close();
+                $sql = "SELECT id FROM users WHERE username = ?";
+        
+                if($stmt = $conn->prepare($sql)) {
+                    // Bind variables to the prepared statement as parameters
+                    $stmt->bind_param("s", $param_username);
+            
+                    // Set parameters
+                    $param_username = trim($_POST["username"]);
+            
+                    // Attempt to execute the prepared statement
+                    if($stmt->execute()) {
+                        // store result
+                        $stmt->store_result();
+                
+                        if($stmt->num_rows == 1) {
+                            $stmt->bind_result($id);
+                            if($stmt->fetch()){
+                                // Store data in session variables
+                                $_SESSION["loggedin"] = true;
+                                $_SESSION["id"] = $id;
+                                $_SESSION["username"] = $username;
+                                // Redirect to main page
+                                header("location: ../index.php");
+                            }
+                        }
+                        else {
+                            echo "didn't make it";
+                        }
+                    }
+                }
+                else {
+                    echo "Something went wrong. Please try again later.";
+                    header("location: ../register.php");
+                }
             }
+            // Close statement
+            $stmt->close();
         }
-         
-        // Close statement
-        $stmt->close();
+        // Close connection
+        $conn->close();
     }
-    
-    // Close connection
-    $mysqli->close();
 }
 ?>
