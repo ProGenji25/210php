@@ -1,5 +1,5 @@
 <?php
-error_reporting(-1);
+error_reporting(0);
 // Include config file
 require_once "../config/settings.php";
  
@@ -15,7 +15,6 @@ if ($conn->connect_error) {
 else {
     // Define variables and initialize with empty values
     $username = $password = $confirm_password = "";
-    $username_err = $password_err = $confirm_password_err = "";
  
     // Processing form data when form is submitted
     if($_SERVER["REQUEST_METHOD"] == "POST") {

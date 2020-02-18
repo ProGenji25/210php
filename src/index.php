@@ -52,7 +52,6 @@ if(!isset($_SESSION["loggedin"]) || $_SESSION["loggedin"] !== true){
 			<a href="#" class="brand-logo">IT&amp;C 210</a>
 			<ul id="nav-mobile" class="right hide-on-med-and-down">
 				<li><?php echo htmlspecialchars($_SESSION["username"]); ?></li>
-				
 				<li><a href="/actions/logout-action.php">Logout</a></li>
 			</ul>
 		</div>

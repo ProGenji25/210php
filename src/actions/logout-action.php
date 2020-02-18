@@ -1,5 +1,5 @@
 <?php
-error_reporting(-1);
+error_reporting(0);
 require_once "../config/settings.php";
 // Initialize the session
 session_start();
@@ -7,8 +7,6 @@ session_start();
 // Unset all of the session variables
 $_SESSION = array();
  
-
-
 // Create connection
 $conn = new mysqli($servername, $mysql_user, $mysql_password, $mysql_database);
 
