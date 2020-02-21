@@ -1,5 +1,5 @@
 <?php
-error_reporting(-1);
+error_reporting(0);
 
 require_once "../config/settings.php";
 
@@ -15,16 +15,10 @@ if ($conn->connect_error) {
 else {
     // Processing form data when form is submitted
     if($_SERVER["REQUEST_METHOD"] == "POST") {
-        //echo $_POST["id"];
-        //echo $_POST["done"];
         if(isset($_POST["id"]) && isset($_POST["done"])){
             // Get hidden input value
             $id = trim($_POST["id"]);
             $done = trim($_POST["done"]);
-            //echo $id;
-            //echo $done;
-            //$done === 0 ? $done = 1 : $done = 0; 
-            //echo $done;
             if($done == 0) {
                 $done = 1;
             }
@@ -34,7 +28,6 @@ else {
 
             // Prepare an update statement
             $sql = "UPDATE items SET done=? WHERE id=?";
-            //echo $sql;
             if($stmt = $conn->prepare($sql)){
                 // Bind variables to the prepared statement as parameters
                 $stmt->bind_param("ii", $param_done, $param_id);
@@ -44,7 +37,6 @@ else {
                 $param_id = $id;
             
                 // Attempt to execute the prepared statement
-                //echo "executing";
                 if($stmt->execute()){
                     // Records updated successfully. Redirect to home page
                     header("location: ../index.php");

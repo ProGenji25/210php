@@ -1,5 +1,5 @@
 <?php 
-error_reporting(-1);
+error_reporting(0);
 
 // Include config file
 require_once "../config/settings.php";
