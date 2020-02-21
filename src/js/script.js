@@ -79,8 +79,8 @@ function sortList(){
     readItems();
 }
 
-document.getElementById("submit-btn").addEventListener("click", createItem);
-document.getElementById("sort-btn").addEventListener("click", sortList);
+//document.getElementById("submit-btn").addEventListener("click", createItem);
+//document.getElementById("sort-btn").addEventListener("click", sortList);
 
 var input = document.getElementsByTagName('input');
 

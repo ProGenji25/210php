@@ -40,7 +40,7 @@ nav{
     background-color: var(--secondary-dark)
 }
 
-.check:checked + span{
+.check:checked + span.task{
     text-decoration: line-through;
 }
 
@@ -50,4 +50,8 @@ nav{
 
 #sort-btn{
     background-color: var(--secondary)
+}
+
+.check{
+    min-width: 13px !important
 }
